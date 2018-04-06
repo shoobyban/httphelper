@@ -33,7 +33,7 @@ func HTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) (inte
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{
-		Timeout:   time.Second * 10,
+		Timeout:   time.Second * 100,
 		Transport: tr,
 	}
 
