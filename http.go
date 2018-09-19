@@ -19,6 +19,7 @@ type HTTPAuth struct {
 	Password string
 }
 
+// HTTPRequest is a helper function creating a http requests
 func HTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) ([]byte, error) {
 	body, _, err := HTTPRequestResp(method, url, requestBody, auth)
 	return body, err
@@ -28,20 +29,20 @@ func HTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) ([]by
 func ParsedHTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) ([]byte, interface{}, error) {
 	body, resp, err := HTTPRequestResp(method, url, requestBody, auth)
 	if err != nil {
-		slog.Infof("Error reading from URL %s", url, err.Error())
+		slog.Infof("Error reading from URL %s %v", url, err)
 		return body, resp, err
 	}
 	var parsedbody interface{}
 	if resp.Header.Get("Content-Type") == "application/json" {
 		err = json.Unmarshal(body, &parsedbody)
 		if err != nil {
-			slog.Infof("Error parsing body JSON %s", url, err)
+			slog.Infof("Error parsing body JSON %s %v", url, err)
 		}
 	}
 	if resp.Header.Get("Content-Type") == "application/xml" {
 		err = xml.Unmarshal(body, &parsedbody)
 		if err != nil {
-			slog.Infof("Error parsing body XML %s", url, err)
+			slog.Infof("Error parsing body XML %s %v", url, err)
 		}
 	}
 	return body, parsedbody, err
