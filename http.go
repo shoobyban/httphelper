@@ -82,7 +82,7 @@ func HTTPRequestResp(method, url string, requestBody io.Reader, auth HTTPAuth) (
 		slog.Infof("Error reading from URL %s: %v", url, err)
 		return body, resp, fmt.Errorf("Error while connecting to URL")
 	}
-	if resp.StatusCode > 200 {
+	if resp.StatusCode > 399 {
 		slog.Infof("Error reading from URL %s, status: %d, body: %s error:%v", url, resp.StatusCode, string(body), err)
 		return body, resp, fmt.Errorf("Error reading from URL %s, status: %d, body: %s error:%v", url, resp.StatusCode, string(body), err)
 	}
