@@ -86,6 +86,6 @@ func HTTPRequestResp(method, url string, requestBody io.Reader, auth HTTPAuth) (
 		slog.Infof("Error reading from URL %s, status: %d, body: %s error:%v", url, resp.StatusCode, string(body), err)
 		return body, resp, fmt.Errorf("Error reading from URL %s, status: %d, body: %s error:%v", url, resp.StatusCode, string(body), err)
 	}
-	slog.Infof("response Body: %v", body)
+	//	slog.Infof("response Body: %s", string(body))
 	return body, resp, nil
 }
