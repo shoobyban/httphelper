@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/shoobyban/slog"
@@ -33,13 +34,12 @@ func ParsedHTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth)
 		return body, resp, err
 	}
 	var parsedbody interface{}
-	if resp.Header.Get("Content-Type") == "application/json" {
+	if strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
 		err = json.Unmarshal(body, &parsedbody)
 		if err != nil {
 			slog.Infof("Error parsing body JSON %s %v", url, err)
 		}
-	}
-	if resp.Header.Get("Content-Type") == "application/xml" {
+	} else if strings.HasPrefix(resp.Header.Get("Content-Type"), "application/xml") {
 		err = xml.Unmarshal(body, &parsedbody)
 		if err != nil {
 			slog.Infof("Error parsing body XML %s %v", url, err)
