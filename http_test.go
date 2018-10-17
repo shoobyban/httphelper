@@ -26,3 +26,13 @@ func TestParsedHTTPRequest(t *testing.T) {
 	}
 
 }
+
+func TestParsedHTTPRequestErr(t *testing.T) {
+
+	_, _, err := ParsedHTTPRequest("GET", "server.URL", bytes.NewBuffer([]byte{}), HTTPAuth{})
+
+	if err == nil {
+		t.Errorf("No error")
+	}
+
+}
