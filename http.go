@@ -20,15 +20,15 @@ type HTTPAuth struct {
 	Password string
 }
 
-// HTTPRequestWithContentType is a helper function creating a http requests
-func HTTPRequestWithContentType(method, url string, requestBody io.Reader, auth HTTPAuth, contentType string) ([]byte, error) {
-	body, _, err := HTTPRequestResp(method, url, requestBody, auth, contentType)
+// HTTPRequestWithHeaders is a helper function creating a http requests
+func HTTPRequestWithHeaders(method, url string, requestBody io.Reader, auth HTTPAuth, headers map[string]string) ([]byte, error) {
+	body, _, err := HTTPRequestResp(method, url, requestBody, auth, headers)
 	return body, err
 }
 
-// ParsedHTTPRequestWithContentType is a helper function creating a http requests parsing JSON or XML response
-func ParsedHTTPRequestWithContentType(method, url string, requestBody io.Reader, auth HTTPAuth, contentType string) ([]byte, interface{}, error) {
-	body, resp, err := HTTPRequestResp(method, url, requestBody, auth, contentType)
+// ParsedHTTPRequestWithHeaders is a helper function creating a http requests parsing JSON or XML response
+func ParsedHTTPRequestWithHeaders(method, url string, requestBody io.Reader, auth HTTPAuth, headers map[string]string) ([]byte, interface{}, error) {
+	body, resp, err := HTTPRequestResp(method, url, requestBody, auth, headers)
 	if err != nil {
 		slog.Infof("Error reading from URL %s %v", url, err)
 		return body, resp, err
@@ -51,13 +51,13 @@ func ParsedHTTPRequestWithContentType(method, url string, requestBody io.Reader,
 
 // HTTPRequest is a helper function creating a http requests
 func HTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) ([]byte, error) {
-	body, _, err := HTTPRequestResp(method, url, requestBody, auth, "application/json")
+	body, _, err := HTTPRequestResp(method, url, requestBody, auth, map[string]string{})
 	return body, err
 }
 
 // ParsedHTTPRequest is a helper function creating a http requests parsing JSON or XML response
 func ParsedHTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth) ([]byte, interface{}, error) {
-	body, resp, err := HTTPRequestResp(method, url, requestBody, auth, "application/json")
+	body, resp, err := HTTPRequestResp(method, url, requestBody, auth, map[string]string{})
 	if err != nil {
 		slog.Infof("Error reading from URL %s %v", url, err)
 		return body, resp, err
@@ -79,13 +79,16 @@ func ParsedHTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth)
 }
 
 // HTTPRequestResp is a helper function creating a http requests
-func HTTPRequestResp(method, url string, requestBody io.Reader, auth HTTPAuth, contentType string) ([]byte, *http.Response, error) {
+func HTTPRequestResp(method, url string, requestBody io.Reader, auth HTTPAuth, headers map[string]string) ([]byte, *http.Response, error) {
 	req, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
 		slog.Infof("Error creating request: %v", err)
 		return nil, &http.Response{}, fmt.Errorf("Error creating request: %v", err)
 	}
-	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Content-Type", "application/json")
+	for h, val := range headers {
+		req.Header.Set(h, val)
+	}
 	if auth.User != "" {
 		req.SetBasicAuth(auth.User, auth.Password)
 	}
