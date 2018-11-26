@@ -3,7 +3,6 @@ package httphelper
 import (
 	"crypto/tls"
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/shoobyban/mxj"
 	"github.com/shoobyban/slog"
 )
 
@@ -40,10 +40,11 @@ func ParsedHTTPRequest(method, url string, requestBody io.Reader, auth HTTPAuth)
 			slog.Infof("Error parsing body JSON %s %v", url, err)
 		}
 	} else if strings.HasPrefix(resp.Header.Get("Content-Type"), "application/xml") {
-		err = xml.Unmarshal(body, &parsedbody)
+		m, err := mxj.NewMapXml(body)
 		if err != nil {
 			slog.Infof("Error parsing body XML %s %v", url, err)
 		}
+		return body, m, err
 	}
 	return body, parsedbody, err
 }
