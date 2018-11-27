@@ -39,7 +39,7 @@ func ParsedHTTPRequestWithHeaders(method, url string, requestBody io.Reader, aut
 		if err != nil {
 			slog.Infof("Error parsing body JSON %s %v", url, err)
 		}
-	} else if strings.HasPrefix(resp.Header.Get("Content-Type"), "application/xml") {
+	} else if strings.Contains(resp.Header.Get("Content-Type"), "xml") {
 		m, err := mxj.NewMapXml(body)
 		if err != nil {
 			slog.Infof("Error parsing body XML %s %v", url, err)
