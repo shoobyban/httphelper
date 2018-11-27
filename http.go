@@ -18,6 +18,7 @@ import (
 type HTTPAuth struct {
 	User     string
 	Password string
+	Token    string
 }
 
 // HTTPRequestWithHeaders is a helper function creating a http requests
@@ -91,6 +92,9 @@ func HTTPRequestResp(method, url string, requestBody io.Reader, auth HTTPAuth, h
 	}
 	if auth.User != "" {
 		req.SetBasicAuth(auth.User, auth.Password)
+	}
+	if auth.Token != "" {
+		req.Header.Set("Authorization", "Bearer "+auth.Token)
 	}
 
 	tr := &http.Transport{
