@@ -47,7 +47,7 @@ func ParsedHTTPRequestWithHeaders(method, url string, requestBody io.Reader, aut
 	} else if strings.Contains(resp.Header.Get("Content-Type"), "xml") {
 		m, err := mxj.NewMapXml(body)
 		if err != nil {
-			return body, m, fmt.Errorf("Error parsing body XML %s %v", url, err)
+			return body, m, fmt.Errorf("Error parsing body XML %s %v '%v'", url, err, body)
 		}
 		return body, m, nil
 	}
